@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <!-- Basic settings -->
+    <PropertyGroup>
+        <!-- Prevents double inclusion of root configuration propers if project included with this condition -->
+        <RootConfigurationIncluded>yes</RootConfigurationIncluded>
+        
+        <LibraryOutputPath Condition="'$(LibraryOutputPath)'==''">$(MSBuildThisFileDirectory)BuildDrop\$(Configuration)\</LibraryOutputPath>
+        <LibraryOutputTestPath Condition="'$(LibraryOutputTestPath)'==''">$(MSBuildThisFileDirectory)BuildDrop\Test\$(Configuration)\</LibraryOutputTestPath>
+        
+    </PropertyGroup>
+
+
+</Project>

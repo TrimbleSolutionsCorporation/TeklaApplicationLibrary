@@ -1,0 +1,46 @@
+﻿<project schemaVersion="1.3.3.1">
+    <assemblies>
+        <assembly assemblyPath=".\src\bin\Debug\Tekla.UI.HyperToolTips.dll" xmlCommentsPath=".\src\bin\Debug\Tekla.UI.HyperToolTips.xml" commentsOnly="False" />
+    </assemblies>
+    <namespaceSummaries>
+        <namespaceSummaryItem name="" isDocumented="False" />
+        <namespaceSummaryItem name="Tekla.UI.HyperToolTips" isDocumented="True">A namespace where all classes related to HyperToolTip implementation and usage helpers located.</namespaceSummaryItem>
+    </namespaceSummaries>
+    <contentPlacement>AboveNamespaces</contentPlacement>
+    <projectSummary>This is an implementation of HyperToolTips (tool tips in MS Office 2007 style). HyperToolTips can be used as attached to various U Ielements to reduce documentation required. HyperToolTip window implemented here also can be used directly for various pupups.
+Usage of the library is similar to WIndows.Form.ToolTip standard class usage. HyperToolTips are implemented as an extension provider for UI elements. VS provides design time support for HyperToolTips.&lt;br/&gt;
+&lt;br/&gt;
+To receive VS design time support drop the library assembly to VS designed toolbox.&lt;br/&gt;
+&lt;br/&gt;
+&lt;b&gt;Notes for documentor&lt;/b&gt;&lt;br/&gt;
+Usually in debug mode you can get a HyperTooltipId assigned to UI element by pressing SHIFT key and moving mouse pointer over the element. After that HyperTooltipId is copied into clipboard as text.&lt;br/&gt;
+HyperTooltipId is used by program as a file name ("/[HyperTooltipId].html") inside CHM to get tip content. Full url used to find the tip is shown in popup for UI element in case HyperTooltipId is defined but content is not found, so you can check e.g. tooltips' filename used.
+You can add '_l' suffix to HyperTooltipId while naming html file ("/[HyperTooltipId]_l.html"). In this case large size (by default 311,300) will be used for tip's popup window, normal size (default 311,176) is used othervise.</projectSummary>
+    <sandcastlePath />
+    <hhcPath />
+    <hxcompPath />
+    <outputPath>.\Help\</outputPath>
+    <helpFileFormat>HtmlHelp1x</helpFileFormat>
+    <cleanIntermediates>True</cleanIntermediates>
+    <purgeDuplicateTopics>True</purgeDuplicateTopics>
+    <cppCommentsFixup>False</cppCommentsFixup>
+    <frameworkVersion>2.0.50727</frameworkVersion>
+    <binaryTOC>True</binaryTOC>
+    <includeFavorites>False</includeFavorites>
+    <preliminary>True</preliminary>
+    <rootNSContainer>False</rootNSContainer>
+    <helpTitle>A HyperToolTips Class Library</helpTitle>
+    <htmlHelpName>Tekla.UI.HyperToolTips</htmlHelpName>
+    <language>en-US</language>
+    <copyrightHref>http://www.tekla.com</copyrightHref>
+    <copyrightText>Tekla 2007, 2008</copyrightText>
+    <feedbackEMailAddress>ext-Alexey.Otavin@tekla.com</feedbackEMailAddress>
+    <headerText />
+    <projectLinks>Local</projectLinks>
+    <sdkLinks>Msdn</sdkLinks>
+    <presentationStyle>Prototype</presentationStyle>
+    <namingMethod>Guid</namingMethod>
+    <syntaxFilters>Standard</syntaxFilters>
+    <missingTags>Summary, Parameter, Returns, AutoDocumentCtors</missingTags>
+    <visibleItems>InheritedMembers, InheritedFrameworkMembers, Protected, SealedProtected</visibleItems>
+</project>

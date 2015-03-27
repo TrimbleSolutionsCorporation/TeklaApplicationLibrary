@@ -1,0 +1,23 @@
+
+ObjectPropertiesLibrary contains functionality to load/save and modify TS objects properties presentable 
+in GUI applications. As well as some small helpfull items.
+
+Properties handling is based on two xml files, one which includes Shown properties, usually the one used for binding in UI. Other
+one includes all properties. 
+
+PresentedPropertiesXml - Handles (de)serializing of list of 
+PresentedProperties - Fata class for property. Name, Report/UDA property name, type, visibility, column width etc. 
+
+PresentedPropertiesManage - Functionality for fetching property values from TS model objects based on presented properties.
+
+PropertiesForm - Form for handling properties information in PresentedPropertiesXml. Has two modes, one which Shown properties are
+visible in UI and added removed by arrows in classic way. In other one shown properties added/removed according included-checkbox.
+
+AllPropertiesDialog - User control for handling all properties. 
+ShownPropertiesDialog - User control for handling shown properties. 
+
+Some other general user controls for searchbox etc.
+
+
+
+

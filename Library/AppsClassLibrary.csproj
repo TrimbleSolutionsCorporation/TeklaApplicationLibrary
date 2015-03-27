@@ -1,0 +1,294 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <Import Project="packages\TeklaOpenAPI.21.0.1640\build\TeklaOpenAPI.props" Condition="Exists('packages\TeklaOpenAPI.21.0.1640\build\TeklaOpenAPI.props')" />
+  <Import Project="..\configuration.props"/>
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.50727</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{0C9AE635-F74C-42F4-B109-B3E691D043F1}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>Tekla.Structures</RootNamespace>
+    <AssemblyName>Tekla.Application.Library</AssemblyName>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>
+    </AssemblyOriginatorKeyFile>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <OldToolsVersion>2.0</OldToolsVersion>
+    <UpgradeBackupLocation />
+    <TargetFrameworkProfile />
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+    <NuGetPackageImportStamp>d2cec9c4</NuGetPackageImportStamp>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>$(LibraryOutputPath)</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>$(LibraryOutputPath)</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+    <Reference Include="Tekla.Structures, Version=21.0.0.0, Culture=neutral, PublicKeyToken=2f04dbe497b71114, processorArchitecture=MSIL">
+      <Private>False</Private>
+      <HintPath>..\packages\TeklaOpenAPI.21.0.1640\lib\Tekla.Structures.dll</HintPath>
+    </Reference>
+    <Reference Include="Tekla.Structures.Analysis, Version=21.0.0.0, Culture=neutral, PublicKeyToken=2f04dbe497b71114, processorArchitecture=MSIL">
+      <Private>False</Private>
+      <HintPath>..\packages\TeklaOpenAPI.21.0.1640\lib\Tekla.Structures.Analysis.dll</HintPath>
+    </Reference>
+    <Reference Include="Tekla.Structures.Catalogs, Version=21.0.0.0, Culture=neutral, PublicKeyToken=2f04dbe497b71114, processorArchitecture=MSIL">
+      <Private>False</Private>
+      <HintPath>..\packages\TeklaOpenAPI.21.0.1640\lib\Tekla.Structures.Catalogs.dll</HintPath>
+    </Reference>
+    <Reference Include="Tekla.Structures.Datatype, Version=21.0.0.0, Culture=neutral, PublicKeyToken=2f04dbe497b71114, processorArchitecture=MSIL">
+      <Private>False</Private>
+      <HintPath>..\packages\TeklaOpenAPI.21.0.1640\lib\Tekla.Structures.Datatype.dll</HintPath>
+    </Reference>
+    <Reference Include="Tekla.Structures.Dialog, Version=21.0.0.0, Culture=neutral, PublicKeyToken=2f04dbe497b71114, processorArchitecture=MSIL">
+      <Private>False</Private>
+      <HintPath>..\packages\TeklaOpenAPI.21.0.1640\lib\Tekla.Structures.Dialog.dll</HintPath>
+    </Reference>
+    <Reference Include="Tekla.Structures.Drawing, Version=21.0.0.0, Culture=neutral, PublicKeyToken=2f04dbe497b71114, processorArchitecture=MSIL">
+      <Private>False</Private>
+      <HintPath>..\packages\TeklaOpenAPI.21.0.1640\lib\Tekla.Structures.Drawing.dll</HintPath>
+    </Reference>
+    <Reference Include="Tekla.Structures.Model, Version=21.0.0.0, Culture=neutral, PublicKeyToken=2f04dbe497b71114, processorArchitecture=MSIL">
+      <Private>False</Private>
+      <HintPath>..\packages\TeklaOpenAPI.21.0.1640\lib\Tekla.Structures.Model.dll</HintPath>
+    </Reference>
+    <Reference Include="Tekla.Structures.Plugins, Version=21.0.0.0, Culture=neutral, PublicKeyToken=2f04dbe497b71114, processorArchitecture=MSIL">
+      <Private>False</Private>
+      <HintPath>..\packages\TeklaOpenAPI.21.0.1640\lib\Tekla.Structures.Plugins.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Concrete\ClassificatorCalculator.cs" />
+    <Compile Include="Concrete\PatternInfo.cs" />
+    <Compile Include="Concrete\RebarGroupConversionData.cs" />
+    <Compile Include="Concrete\SingleRebarToRebarGroupConverter.cs" />
+    <Compile Include="Concrete\SpliceData.cs" />
+    <Compile Include="Concrete\SplitData.cs" />
+    <Compile Include="Enumerable.cs" />
+    <Compile Include="InpParser\EOFException.cs" />
+    <Compile Include="IOTools\FileChecksum.cs" />
+    <Compile Include="IRegistry.cs" />
+    <Compile Include="Concrete\CreateSingleRebar.cs" />
+    <Compile Include="Concrete\SpliceRebarsInPart.cs" />
+    <Compile Include="Concrete\SplitRebarsInPart.cs" />
+    <Compile Include="ISelectObject.cs" />
+    <Compile Include="ObjectPropertiesLibrary\AllPropertiesDialog.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ObjectPropertiesLibrary\AllPropertiesDialog.designer.cs">
+      <DependentUpon>AllPropertiesDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ObjectPropertiesLibrary\DataGridViewNullableDateTimePickerColumn.cs" />
+    <Compile Include="ObjectPropertiesLibrary\DrawingControl.cs" />
+    <Compile Include="ObjectPropertiesLibrary\MathEvaluate.cs" />
+    <Compile Include="ObjectPropertiesLibrary\NullableDateTimePicker.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="ObjectPropertiesLibrary\NullableDateTimePickerCell.cs" />
+    <Compile Include="ObjectPropertiesLibrary\NullableDateTimePickerEditingControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="ObjectPropertiesLibrary\PresentedProperties.cs" />
+    <Compile Include="ObjectPropertiesLibrary\PresentedPropertiesManage.cs" />
+    <Compile Include="ObjectPropertiesLibrary\PresentedPropertiesXml.cs" />
+    <Compile Include="ObjectPropertiesLibrary\PropertiesForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ObjectPropertiesLibrary\PropertiesForm.designer.cs">
+      <DependentUpon>PropertiesForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ObjectPropertiesLibrary\Properties\Resources.Designer.cs" />
+    <Compile Include="ObjectPropertiesLibrary\PropertyComparer.cs" />
+    <Compile Include="ObjectPropertiesLibrary\QuickSearchForDGW.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ObjectPropertiesLibrary\QuickSearchForDGW.designer.cs">
+      <DependentUpon>QuickSearchForDGW.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ObjectPropertiesLibrary\QuickSearchForDT.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ObjectPropertiesLibrary\QuickSearchForDT.Designer.cs" />
+    <Compile Include="ObjectPropertiesLibrary\SearchableSortableBindingList.cs" />
+    <Compile Include="ObjectPropertiesLibrary\ShownPropertiesDialog.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ObjectPropertiesLibrary\ShownPropertiesDialog.Designer.cs" />
+    <Compile Include="ObjectPropertiesLibrary\TSConnection.cs" />
+    <Compile Include="InpParser\Picture.cs" />
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+    <Compile Include="Registry.cs" />
+    <Compile Include="SeparateThread.cs" />
+    <Compile Include="Cache.cs" />
+    <Compile Include="CommonTasks.cs" />
+    <Compile Include="Configuration.cs" />
+    <Compile Include="ConfigurationSet.cs" />
+    <Compile Include="Connection.cs" />
+    <Compile Include="DrawingConnection.cs" />
+    <Compile Include="ICommonTasks.cs" />
+    <Compile Include="IConnection.cs" />
+    <Compile Include="IDrawing.cs" />
+    <Compile Include="IEnvironment.cs" />
+    <Compile Include="IMainWindow.cs" />
+    <Compile Include="IModel.cs" />
+    <Compile Include="IPicker.cs" />
+    <Compile Include="IRunMacro.cs" />
+    <Compile Include="ISelection.cs" />
+    <Compile Include="ITransaction.cs" />
+    <Compile Include="InpParser\Lexer.cs" />
+    <Compile Include="MacroBuilder.cs" />
+    <Compile Include="MainWindow.cs" />
+    <Compile Include="ModelConnection.cs" />
+    <Compile Include="ModelFolder.cs" />
+    <Compile Include="InpParser\Parser.cs" />
+    <Compile Include="InpParser\UDAValue.cs" />
+    <Compile Include="SearchPath.cs" />
+    <Compile Include="TeklaStructures.cs" />
+    <Compile Include="InpParser\Token.cs" />
+    <Compile Include="InpParser\TSModelObject.cs" />
+    <Compile Include="InpParser\TSTabPageDeclaration.cs" />
+    <Compile Include="InpParser\TSTabPageDefinition.cs" />
+    <Compile Include="InpParser\TSTabPageObject.cs" />
+    <Compile Include="InpParser\UDA.cs" />
+    <Compile Include="UI\ExpandableStringComboBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UnitConverter.cs" />
+    <Compile Include="VirtualFolder.cs" />
+    <Compile Include="WaitingDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="WaitingDialog.Designer.cs">
+      <DependentUpon>WaitingDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="InpParser\WrongFormatException.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="packages.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="ObjectPropertiesLibrary\AllPropertiesDialog.resx">
+      <DependentUpon>AllPropertiesDialog.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ObjectPropertiesLibrary\PropertiesForm.resx">
+      <DependentUpon>PropertiesForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ObjectPropertiesLibrary\Properties\Resources.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ObjectPropertiesLibrary\QuickSearchForDGW.resx">
+      <DependentUpon>QuickSearchForDGW.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ObjectPropertiesLibrary\QuickSearchForDT.resx">
+      <DependentUpon>QuickSearchForDT.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ObjectPropertiesLibrary\ShownPropertiesDialog.resx">
+      <DependentUpon>ShownPropertiesDialog.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="WaitingDialog.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>WaitingDialog.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ObjectPropertiesLibrary\Resources\move_down_24.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ObjectPropertiesLibrary\Resources\Run.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ObjectPropertiesLibrary\Resources\Cancel.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ObjectPropertiesLibrary\Resources\keep_selection_16.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ObjectPropertiesLibrary\Resources\delete_big.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ObjectPropertiesLibrary\Resources\autoselect_objects_active_big.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ObjectPropertiesLibrary\Resources\autoselect_objects_passive_big.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ObjectPropertiesLibrary\Resources\EditTableHS.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ObjectPropertiesLibrary\Resources\PasteHS.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ObjectPropertiesLibrary\Resources\open_big.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ObjectPropertiesLibrary\Resources\save_as_big.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ObjectPropertiesLibrary\Resources\AddTable.bmp" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\TeklaOpenAPI.21.0.1640\build\TeklaOpenAPI.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\TeklaOpenAPI.21.0.1640\build\TeklaOpenAPI.props'))" />
+  </Target>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
