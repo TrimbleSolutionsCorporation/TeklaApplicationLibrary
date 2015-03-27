@@ -7,6 +7,12 @@ https://guides.github.com/
 One example with more basic information showing how to work with Tekla Tool Library is available here:
 https://guides.github.com/activities/hello-world/
 
+You can download information about Tekla Open API from Tekla Warehouse:
+https://warehouse.tekla.com/#/collections/online/u36ce80f7-2967-4fcf-a28a-bb7545b12d0e/
+
+The free Tekla Structures Learning Edition is available here:
+https://campus.tekla.com/
+
 The Tool Library includes pieces of code licensed under the following licenses:
 
 === Apache License ===
