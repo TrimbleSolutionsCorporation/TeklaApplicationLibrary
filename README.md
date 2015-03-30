@@ -1,3 +1,6 @@
+== Build ==
+[![Build status](https://ci.appveyor.com/api/projects/status/oov2pqvtgcviaoac?svg=true)](https://ci.appveyor.com/project/jorgecosta/teklaapplicationlibrary)
+
 == Licensing ==
 Tekla Tool Library project is licensed under FreeBSD license. 
 
