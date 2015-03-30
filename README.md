@@ -1,7 +1,7 @@
-== Build ==
+# Build
 [![Build status](https://ci.appveyor.com/api/projects/status/oov2pqvtgcviaoac?svg=true)](https://ci.appveyor.com/project/jorgecosta/teklaapplicationlibrary)
 
-== Licensing ==
+# Licensing
 Tekla Tool Library project is licensed under FreeBSD license. 
 
 The recommended workflow for Tekla Tool Library project is the default github flow as explained here:
@@ -18,7 +18,7 @@ https://campus.tekla.com/
 
 The Tool Library includes pieces of code licensed under the following licenses:
 
-=== Apache License ===
+# Apache License ===
 // Licensed to the Apache Software Foundation (ASF) under one or more 
 // contributor license agreements. See the NOTICE file distributed with
 // this work for additional information regarding copyright ownership. 
@@ -32,7 +32,7 @@ The Tool Library includes pieces of code licensed under the following licenses:
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-=== Microsoft Limited Public License (Ms-LPL) ===
+# Microsoft Limited Public License (Ms-LPL) ===
 From: http://clrinterop.codeplex.com/license
 
 This license governs use of the accompanying software. If you use the software, you accept this license. If you do not accept the license, do not use the software.
