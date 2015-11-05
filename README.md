@@ -1,5 +1,5 @@
 ## Build
-[![Build status](https://ci.appveyor.com/api/projects/status/oov2pqvtgcviaoac?svg=true)](https://ci.appveyor.com/project/jorgecosta/teklaapplicationlibrary)
+[![Build status](https://ci.appveyor.com/api/projects/status/rl023eoj67sw1rr7/branch/master?svg=true)](https://ci.appveyor.com/project/TeklaCorp/teklaapplicationlibrary/branch/master)
 
 ## Licensing
 Tekla Tool Library project is licensed under FreeBSD license. 
