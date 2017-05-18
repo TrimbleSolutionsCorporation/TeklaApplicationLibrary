@@ -7,9 +7,6 @@ Tekla Tool Library project is licensed under FreeBSD license.
 The recommended workflow for Tekla Tool Library project is the default github flow as explained here:
 https://guides.github.com/
 
-One example with more basic information showing how to work with Tekla Tool Library is available here:
-https://guides.github.com/activities/hello-world/
-
 You can download information about Tekla Open API from Tekla Warehouse:
 https://warehouse.tekla.com/#/collections/online/u36ce80f7-2967-4fcf-a28a-bb7545b12d0e/
 
