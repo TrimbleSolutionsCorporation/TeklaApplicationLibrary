@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <Import Project="packages\TeklaOpenAPI.21.0.1640\build\TeklaOpenAPI.props" Condition="Exists('packages\TeklaOpenAPI.21.0.1640\build\TeklaOpenAPI.props')" />
-  <Import Project="..\configuration.props"/>
+  <Import Project="..\configuration.props" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -108,6 +108,11 @@
     <Compile Include="Concrete\SpliceRebarsInPart.cs" />
     <Compile Include="Concrete\SplitRebarsInPart.cs" />
     <Compile Include="ISelectObject.cs" />
+    <Compile Include="Model\GetObject.cs" />
+    <Compile Include="Model\GetObjects.cs" />
+    <Compile Include="Model\GetUDA.cs" />
+    <Compile Include="Model\SelectObjects.cs" />
+    <Compile Include="Model\SetUDA.cs" />
     <Compile Include="ObjectPropertiesLibrary\AllPropertiesDialog.cs">
       <SubType>UserControl</SubType>
     </Compile>
