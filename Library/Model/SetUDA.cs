@@ -7,13 +7,13 @@ namespace Tekla.Structures.Model
     public static partial class UDA
     {
         public static void SetAllUDA(string Guid, Dictionary<string, object> UdaList)
-            => SetAllUDA(GetObject.Get(Guid), UdaList);
+        { SetAllUDA(GetObject.Get(Guid), UdaList); }
 
         public static void SetAllUDA(int Id, Dictionary<string, object> UdaList)
-           => SetAllUDA(GetObject.Get(Id), UdaList);
+        { SetAllUDA(GetObject.Get(Id), UdaList); }
 
         public static void SetAllUDA(TS.Identifier Identifier, Dictionary<string, object> UdaList)
-           => SetAllUDA(GetObject.Get(Identifier), UdaList);
+        { SetAllUDA(GetObject.Get(Identifier), UdaList); }
 
         public static void SetAllUDA(TSM.ModelObject modelObject, Dictionary<string, object> UdaList)
         {

@@ -11,8 +11,8 @@ namespace Tekla.Structures.Model
         /// </summary>
         /// <param name="Guid">Tekla object GUID string</param>
         /// <returns>List of tekla model objects or empty list if invalid GUID</returns>
-        public static List<TSM.ModelObject> Get(string Guid) =>
-            Get(new TSM.Model().GetIdentifierByGUID(Guid));
+        public static List<TSM.ModelObject> Get(string Guid)
+        { return Get(new TSM.Model().GetIdentifierByGUID(Guid)); }
 
         /// <summary>
         /// Gets a list with model objects selected by GUID
@@ -33,8 +33,8 @@ namespace Tekla.Structures.Model
         /// </summary>
         /// <param name="Id">Tekla object int ID</param>
         /// <returns>List of tekla model objects or empty list if invalid ID</returns>
-        public static List<TSM.ModelObject> Get(int Id) =>
-            Get(new TS.Identifier(Id));
+        public static List<TSM.ModelObject> Get(int Id)
+        { return Get(new TS.Identifier(Id)); }
 
         /// <summary>
         /// Gets a list with model objects selected by int IDs
@@ -57,8 +57,8 @@ namespace Tekla.Structures.Model
         /// </summary>
         /// <param name="Identifier">Tekla object Identifier</param>
         /// <returns>List of tekla model objects or empty list if invalid Identifier</returns>
-        public static List<TSM.ModelObject> Get(TS.Identifier Identifier) =>
-            Get(new List<TS.Identifier>() { Identifier });
+        public static List<TSM.ModelObject> Get(TS.Identifier Identifier)
+        { return Get(new List<TS.Identifier>() { Identifier }); }
 
         /// <summary>
         /// Gets a list with model objects selected by tekla identifiers

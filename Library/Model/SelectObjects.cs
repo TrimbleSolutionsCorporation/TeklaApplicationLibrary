@@ -14,8 +14,10 @@ namespace Tekla.Structures.Model
         /// Selects model object with the given GUID
         /// </summary>
         /// <param name="Guid">Tekla object GUID</param>
-        public static void Select(string Guid) =>
+        public static void Select(string Guid)
+        {
             Select(new TSM.Model().GetIdentifierByGUID(Guid));
+        }
 
         /// <summary>
         /// Selects model objects with the given GUIDs
@@ -34,8 +36,10 @@ namespace Tekla.Structures.Model
         /// Selects model objects with the given ID
         /// </summary>
         /// <param name="Id">Tekla object ID</param>
-        public static void Select(int Id) =>
+        public static void Select(int Id)
+        {
             Select(new TS.Identifier(Id));
+        }
 
         /// <summary>
         /// Selects model objects with the given IDs
@@ -56,22 +60,24 @@ namespace Tekla.Structures.Model
         /// Selects model objects with the given Identifier
         /// </summary>
         /// <param name="Identifier">Tekla object Identifier</param>
-        public static void Select(TS.Identifier Identifier) =>
+        public static void Select(TS.Identifier Identifier)
+        {
             Select(new List<TS.Identifier>() { Identifier });
+        }
 
         /// <summary>
         /// Selects model objects with the given Identifiers
         /// </summary>
         /// <param name="Identifiers">Tekla object Identifiers list</param>
-        public static void Select(List<TS.Identifier> Identifiers) =>
-            new TSM.UI.ModelObjectSelector().Select(new ArrayList(GetObjects.Get(Identifiers)));
+        public static void Select(List<TS.Identifier> Identifiers)
+        { new TSM.UI.ModelObjectSelector().Select(new ArrayList(GetObjects.Get(Identifiers))); }
 
         /// <summary>
         /// Add model object with given GUID to selected parts in model
         /// </summary>
         /// <param name="Guid">Tekla object GUID</param>
-        public static void AddSelect(string Guid) =>
-            AddSelect(new TSM.Model().GetIdentifierByGUID(Guid));
+        public static void AddSelect(string Guid)
+        { AddSelect(new TSM.Model().GetIdentifierByGUID(Guid)); }
 
         /// <summary>
         /// Add model object with given GUID to selected parts in model
@@ -90,8 +96,10 @@ namespace Tekla.Structures.Model
         /// Add model object with given ID to selected parts in model
         /// </summary>
         /// <param name="Id">Tekla object ID</param>
-        public static void AddSelect(int Id) =>
+        public static void AddSelect(int Id)
+        {
             AddSelect(new TS.Identifier(Id));
+        }
 
         /// <summary>
         /// Add model object with given IDs to selected parts in model
@@ -112,8 +120,8 @@ namespace Tekla.Structures.Model
         /// Add model object with given Identifier to selected parts in model
         /// </summary>
         /// <param name="Identifier">Tekla object Identifier</param>
-        public static void AddSelect(TS.Identifier Identifier) =>
-            AddSelect(new List<TS.Identifier>() { Identifier });
+        public static void AddSelect(TS.Identifier Identifier)
+        { AddSelect(new List<TS.Identifier>() { Identifier }); }
 
         /// <summary>
         /// Add model object with given Identifiers to selected parts in model
@@ -127,7 +135,7 @@ namespace Tekla.Structures.Model
 
             ArrayList lst = new ArrayList();
 
-            while(values.MoveNext())
+            while (values.MoveNext())
                 lst.Add(values.Current);
 
             lst.AddRange(GetObjects.Get(Identifiers));

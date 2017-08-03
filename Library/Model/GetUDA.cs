@@ -7,13 +7,13 @@ namespace Tekla.Structures.Model
     public static partial class UDA
     {
         public static object GetUDA(string Guid, string Uda)
-            => GetUDA(GetObject.Get(Guid), Uda);
+        { return GetUDA(GetObject.Get(Guid), Uda); }
 
         public static object GetUDA(int Id, string Uda)
-            => GetUDA(GetObject.Get(Id), Uda);
+        { return GetUDA(GetObject.Get(Id), Uda); }
 
         public static object GetUDA(TS.Identifier Identifier, string Uda)
-            => GetUDA(GetObject.Get(Identifier), Uda);
+        { return GetUDA(GetObject.Get(Identifier), Uda); }
 
         public static object GetUDA(TSM.ModelObject ModelObj, string Uda)
         {
@@ -21,19 +21,19 @@ namespace Tekla.Structures.Model
 
             ModelObj.GetUserProperty(Uda, ref refString);
 
-            if(refString.Length < 1)
+            if (refString.Length < 1)
             {
                 double refDouble = double.NaN;
 
                 ModelObj.GetUserProperty(Uda, ref refDouble);
 
-                if(double.IsNaN(refDouble))
+                if (double.IsNaN(refDouble))
                 {
                     int refInt = int.MinValue;
 
                     ModelObj.GetUserProperty(Uda, ref refInt);
 
-                    if(refInt != int.MinValue)
+                    if (refInt != int.MinValue)
                         return refInt;
 
                     return null;
@@ -50,19 +50,19 @@ namespace Tekla.Structures.Model
         }
 
         public static Dictionary<string, object> GetUDAs(string Guid, List<string> Udas)
-            => GetUDAs(GetObject.Get(Guid), Udas);
+        { return GetUDAs(GetObject.Get(Guid), Udas); }
 
         public static Dictionary<string, object> GetUDAs(int Id, List<string> Udas)
-            => GetUDAs(GetObject.Get(Id), Udas);
+        { return GetUDAs(GetObject.Get(Id), Udas); }
 
         public static Dictionary<string, object> GetUDAs(TS.Identifier Identifier, List<string> Udas)
-            => GetUDAs(GetObject.Get(Identifier), Udas);
+        { return GetUDAs(GetObject.Get(Identifier), Udas); }
 
         public static Dictionary<string, object> GetUDAs(TSM.ModelObject ModelObj, List<string> Udas)
         {
             Dictionary<string, object> Items = new Dictionary<string, object>();
 
-            foreach(var item in Udas)
+            foreach (var item in Udas)
                 Items.Add(item, GetUDA(ModelObj, item));
 
             return Items;
