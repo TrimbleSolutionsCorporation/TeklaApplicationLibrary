@@ -26,6 +26,7 @@ namespace Tekla.Structures
     using TSMUI = Tekla.Structures.Model.UI;
     using TSView = Tekla.Structures.Model.UI.View;
     using TSViewHandler = Tekla.Structures.Model.UI.ViewHandler;
+    using TSInp = Tekla.Structures.InpParser;
 
     /// <summary>
     /// Model connection.
@@ -717,7 +718,7 @@ namespace Tekla.Structures
                 }
 
                 return parser.FindUdas(UDATypes.Option).ConvertAll<Dictionary<string, string>>(
-                    delegate(UDA item)
+                    delegate(TSInp.UDA item)
                         {
                             var result = new Dictionary<string, string>();
                             var index = 0;
@@ -943,7 +944,7 @@ namespace Tekla.Structures
                     Debug.WriteLine(ex);
                 }
 
-                return parser.FindUdas(UDATypes.String).ConvertAll<string>(delegate(UDA item) { return item.Name; });
+                return parser.FindUdas(UDATypes.String).ConvertAll<string>(delegate(TSInp.UDA item) { return item.Name; });
             }
         }
 
@@ -1014,7 +1015,7 @@ namespace Tekla.Structures
                     Debug.WriteLine(ex);
                 }
 
-                return parser.FindUdas(UDATypes.Option).ConvertAll<string>(delegate(UDA item) { return item.Name; });
+                return parser.FindUdas(UDATypes.Option).ConvertAll<string>(delegate(TSInp.UDA item) { return item.Name; });
             }
         }
 
