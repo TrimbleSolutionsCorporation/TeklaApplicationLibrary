@@ -264,6 +264,20 @@ namespace Tekla.Structures
             return this;
         }
 
+        /// <summary>Change values from table</summary>
+        /// <param name="dialog">Dialog name.</param>
+        /// <param name="table">Table name.</param>
+        /// <param name="field">Field name.</param>
+        /// <param name="value">Value.</param>
+        /// <returns>Reference to self for fluent interface pattern.</returns>
+        public MacroBuilder TableValueChange(string dialog, string table, string field, string value)
+        {
+            this.macro.AppendFormat(@"akit.TableValueChange(""{0}"",""{1}"",""{2}"",""{3}"")", 
+                dialog, table, field, value);
+            this.macro.AppendLine(";");
+            return this;
+        }
+
         /// <summary>
         /// Returns the constructed macro text.
         /// </summary>
