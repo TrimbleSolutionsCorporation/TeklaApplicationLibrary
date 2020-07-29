@@ -399,7 +399,7 @@ namespace Tekla.Structures.Concrete
                     {
                         RebarGroup newRebarGroup;
 
-                        if (groupRebars.Count > 2
+                        if (groupRebars.Count >= 2
                             && this.CreateNormalOrTaperedRebarGroup(groupRebars, type, out newRebarGroup))
                         {
                             this.rebarGroups.Add(newRebarGroup);
