@@ -2,7 +2,8 @@ namespace Tekla.Structures.Concrete
 {
     using System;
     using System.Collections;
-
+    using System.Collections.Generic;
+    using System.IO;
     using Tekla.Structures.Geometry3d;
     using Tekla.Structures.Model;
 
@@ -33,31 +34,6 @@ namespace Tekla.Structures.Concrete
         /// </summary>
         private const double RebarLengthEpsilon = 12.5;
 
-        /// <summary>
-        /// The standar d_ hoo k_ angl e_135.
-        /// </summary>
-        private const double StandardHookAngle135 = 135;
-
-        /// <summary>
-        /// The standar d_ hoo k_ angl e_180.
-        /// </summary>
-        private const double StandardHookAngle180 = 180;
-
-        /// <summary>
-        /// The standar d_ hoo k_ angl e_90.
-        /// </summary>
-        private const double StandardHookAngle90 = 90;
-
-        /// <summary>
-        /// The standar d_ hoo k_ length.
-        /// </summary>
-        private const double StandardHookLength = 120;
-
-        /// <summary>
-        /// The standar d_ hoo k_ radius.
-        /// </summary>
-        private const double StandardHookRadius = 30;
-
         #endregion
 
         #region Fields
@@ -76,6 +52,16 @@ namespace Tekla.Structures.Concrete
         /// The m_ split data.
         /// </summary>
         private SplitData splitData;
+
+        /// <summary>
+        /// Length of the start hook.
+        /// </summary>
+        private double startHookLength;
+
+        /// <summary>
+        /// Length of the start hook.
+        /// </summary>
+        private double endHookLength;
 
         #endregion
 
@@ -235,11 +221,12 @@ namespace Tekla.Structures.Concrete
                 for (var rebarIndex = 0; rebarIndex < this.singleRebars.Count; rebarIndex++)
                 {
                     this.originalRebar = this.singleRebars[rebarIndex] as SingleRebar;
-                    if (this.originalRebar != null
-                        &&
-                        Distance.PointToPoint(
-                            (Point)this.originalRebar.Polygon.Points[1], (Point)this.originalRebar.Polygon.Points[0])
-                        > this.splitData.MaxLength + this.GetRebarLengthEpsilon())
+                    double length = Distance.PointToPoint((Point)this.originalRebar.Polygon.Points[1], (Point)this.originalRebar.Polygon.Points[0]);
+                    double diameter = this.GetRebarDiameter(this.originalRebar.Size, this.originalRebar.Grade);
+                    this.startHookLength = this.GetHookRealLength(this.originalRebar.StartHook, diameter);
+                    this.endHookLength = this.GetHookRealLength(this.originalRebar.EndHook, diameter);
+
+                    if (this.originalRebar != null && length > this.splitData.MaxLength + this.GetRebarLengthEpsilon())
                     {
                         bool rebarSplitted;
                         ArrayList splitRebarSet;
@@ -247,24 +234,19 @@ namespace Tekla.Structures.Concrete
                         switch (this.splitData.SpliceSection)
                         {
                             case 0:
-                                rebarSplitted = this.SplitEveryRebarInSameLocation(
-                                    rebarIndex, ref remainingOffset, out splitRebarSet);
+                                rebarSplitted = this.SplitEveryRebarInSameLocation(rebarIndex, ref remainingOffset, new List<double>(), out splitRebarSet);
                                 break;
                             case 1:
-                                rebarSplitted = this.SplitEverySecondRebarInSameLocation(
-                                    rebarIndex, ref remainingOffset, out splitRebarSet);
+                                rebarSplitted = this.SplitEverySecondRebarInSameLocation(rebarIndex, ref remainingOffset, new List<double>(), out splitRebarSet);
                                 break;
                             case 2:
-                                rebarSplitted = this.SplitEveryThirdRebarInSameLocation(
-                                    rebarIndex, ref remainingOffset, out splitRebarSet);
+                                rebarSplitted = this.SplitEveryThirdRebarInSameLocation(rebarIndex, new List<double>(), ref remainingOffset, out splitRebarSet);
                                 break;
                             case 3:
-                                rebarSplitted = this.SplitEveryFourthRebarInSameLocation(
-                                    rebarIndex, ref remainingOffset, out splitRebarSet);
+                                rebarSplitted = this.SplitEveryFourthRebarInSameLocation(rebarIndex, new List<double>(), ref remainingOffset, out splitRebarSet);
                                 break;
                             default:
-                                rebarSplitted = this.SplitEveryRebarInSameLocation(
-                                    rebarIndex, ref remainingOffset, out splitRebarSet);
+                                rebarSplitted = this.SplitEveryRebarInSameLocation(rebarIndex, ref remainingOffset, new List<double>(), out splitRebarSet);
                                 break;
                         }
 
@@ -331,7 +313,6 @@ namespace Tekla.Structures.Concrete
             double totalRebarLength, double maxLength, ref double remainingLength, out double hookLength)
         {
             var totalOffset = 0.0;
-            double startHookLength = 0.0, endHookLength = 0.0;
             hookLength = 0.0;
             var centralBarsCount = (int)Math.Floor(totalRebarLength / maxLength);
 
@@ -352,40 +333,8 @@ namespace Tekla.Structures.Concrete
 
                     break;
                 case 2:
-                    if (this.originalRebar.StartHook.Shape == RebarHookData.RebarHookShapeEnum.HOOK_90_DEGREES ||
-                        this.originalRebar.StartHook.Shape == RebarHookData.RebarHookShapeEnum.HOOK_135_DEGREES ||
-                        this.originalRebar.StartHook.Shape == RebarHookData.RebarHookShapeEnum.HOOK_180_DEGREES)
-                    {
-                        startHookLength += 120;
-                        startHookLength += Math.PI * this.originalRebar.StartHook.Radius / 2.0;
-                        startHookLength -= this.originalRebar.StartHook.Radius;
-                    }
-                    else if (this.originalRebar.StartHook.Shape == RebarHookData.RebarHookShapeEnum.CUSTOM_HOOK)
-                    {
-                        startHookLength += this.originalRebar.StartHook.Length;
-                        startHookLength += Math.PI * this.originalRebar.StartHook.Radius * this.originalRebar.StartHook.Angle
-                                           / 180.0;
-                        startHookLength -= this.originalRebar.StartHook.Radius;
-                    }
-
-                    if (this.originalRebar.EndHook.Shape == RebarHookData.RebarHookShapeEnum.HOOK_90_DEGREES ||
-                        this.originalRebar.EndHook.Shape == RebarHookData.RebarHookShapeEnum.HOOK_135_DEGREES ||
-                        this.originalRebar.EndHook.Shape == RebarHookData.RebarHookShapeEnum.HOOK_180_DEGREES)
-                    {
-                        endHookLength += 120;
-                        endHookLength += Math.PI * this.originalRebar.EndHook.Radius / 2.0;
-                        endHookLength -= this.originalRebar.EndHook.Radius;
-                    }
-                    else if (this.originalRebar.EndHook.Shape == RebarHookData.RebarHookShapeEnum.CUSTOM_HOOK)
-                    {
-                        endHookLength += this.originalRebar.EndHook.Length;
-                        endHookLength += Math.PI * this.originalRebar.EndHook.Radius * this.originalRebar.EndHook.Angle
-                                         / 180.0;
-                        endHookLength -= this.originalRebar.EndHook.Radius;
-                    }
-
-                    hookLength = (startHookLength > endHookLength) ? startHookLength : endHookLength;
-                    remainingLength += 2 * hookLength;
+                    hookLength = (this.startHookLength > this.endHookLength) ? this.startHookLength : this.endHookLength;
+                    remainingLength += 2.0 * hookLength;
 
                     if (centralBarsCount == 1)
                     {
@@ -758,44 +707,18 @@ namespace Tekla.Structures.Concrete
                     break;
 
                 case FirstOrLastEnum.FirstRebar:
+                    
                     if (this.splitData.SpliceType == 0)
                     {
                         maxLength -= this.splitData.LappingLength / 2.0;
                     }
 
-                    if (this.originalRebar.StartHook.Shape != RebarHookData.RebarHookShapeEnum.NO_HOOK
-                        && this.originalRebar.StartHook.Shape != RebarHookData.RebarHookShapeEnum.CUSTOM_HOOK)
-                    {
-                        var startAngle = 0.0;
-
-                        if (this.originalRebar.StartHook.Shape == RebarHookData.RebarHookShapeEnum.HOOK_90_DEGREES)
-                        {
-                            startAngle = StandardHookAngle90;
-                        }
-                        else if (this.originalRebar.StartHook.Shape == RebarHookData.RebarHookShapeEnum.HOOK_135_DEGREES)
-                        {
-                            startAngle = StandardHookAngle135;
-                        }
-                        else if (this.originalRebar.StartHook.Shape == RebarHookData.RebarHookShapeEnum.HOOK_180_DEGREES)
-                        {
-                            startAngle = StandardHookAngle180;
-                        }
-
-                        maxLength -= StandardHookLength;
-                        maxLength -= Math.PI * StandardHookRadius * startAngle / 180.0;
-                        maxLength += StandardHookRadius;
-                    }
-                    else if (this.originalRebar.StartHook.Shape == RebarHookData.RebarHookShapeEnum.CUSTOM_HOOK)
-                    {
-                        maxLength -= this.originalRebar.StartHook.Length;
-                        maxLength -= Math.PI * this.originalRebar.StartHook.Radius * this.originalRebar.StartHook.Angle
-                                     / 180.0;
-                        maxLength += this.originalRebar.StartHook.Radius;
-                    }
+                    maxLength -= this.startHookLength;
 
                     break;
 
                 case FirstOrLastEnum.MiddleRebar:
+                    
                     if (this.splitData.SpliceType == 0)
                     {
                         maxLength -= this.splitData.LappingLength;
@@ -804,39 +727,13 @@ namespace Tekla.Structures.Concrete
                     break;
 
                 case FirstOrLastEnum.LastRebar:
+
                     if (this.splitData.SpliceType == 0)
                     {
                         maxLength -= this.splitData.LappingLength / 2.0;
                     }
 
-                    if (this.originalRebar.EndHook.Shape != RebarHookData.RebarHookShapeEnum.NO_HOOK
-                        && this.originalRebar.EndHook.Shape != RebarHookData.RebarHookShapeEnum.CUSTOM_HOOK)
-                    {
-                        var endAngle = 0.0;
-
-                        if (this.originalRebar.EndHook.Shape == RebarHookData.RebarHookShapeEnum.HOOK_90_DEGREES)
-                        {
-                            endAngle = StandardHookAngle90;
-                        }
-                        else if (this.originalRebar.EndHook.Shape == RebarHookData.RebarHookShapeEnum.HOOK_135_DEGREES)
-                        {
-                            endAngle = StandardHookAngle135;
-                        }
-                        else if (this.originalRebar.EndHook.Shape == RebarHookData.RebarHookShapeEnum.HOOK_180_DEGREES)
-                        {
-                            endAngle = StandardHookAngle180;
-                        }
-
-                        maxLength -= StandardHookLength;
-                        maxLength -= Math.PI * StandardHookRadius * endAngle / 180.0;
-                        maxLength += StandardHookRadius;
-                    }
-                    else if (this.originalRebar.EndHook.Shape == RebarHookData.RebarHookShapeEnum.CUSTOM_HOOK)
-                    {
-                        maxLength -= this.originalRebar.EndHook.Length;
-                        maxLength -= Math.PI * this.originalRebar.EndHook.Radius * this.originalRebar.EndHook.Angle / 180.0;
-                        maxLength += this.originalRebar.EndHook.Radius;
-                    }
+                    maxLength -= this.endHookLength;
 
                     break;
 
@@ -876,10 +773,11 @@ namespace Tekla.Structures.Concrete
 
         /// <summary>The split every fourth rebar in same location.</summary>
         /// <param name="rebarIndex">The reinforcement bar index.</param>
+        /// <param name="segmentLengths">Lengths of bars segments.</param>
         /// <param name="remainingOffset">The remaining offset.</param>
         /// <param name="splitRebarSet">The split reinforcement bar set.</param>
         /// <returns>The System.Boolean.</returns>
-        private bool SplitEveryFourthRebarInSameLocation(int rebarIndex, ref double remainingOffset, out ArrayList splitRebarSet)
+        private bool SplitEveryFourthRebarInSameLocation(int rebarIndex, List<double> segmentLengths, ref double remainingOffset, out ArrayList splitRebarSet)
         {
             var result = false;
             var singleRebar = this.singleRebars[rebarIndex] as SingleRebar;
@@ -890,23 +788,47 @@ namespace Tekla.Structures.Concrete
 
             if (singleRebar != null)
             {
-                switch (rebarIndex % 4)
+                if (segmentLengths.Count != 0)
                 {
-                    case 0:
-                        result = this.SplitRebar(singleRebar, SpliceSection.EveryForth, BarPositions.First, ref remainingOffset, out splitRebarSet);
-                        break;
-                    case 1:
-                        result = this.SplitRebar(singleRebar, SpliceSection.EveryForth, BarPositions.Second, ref remainingOffset, out splitRebarSet);
-                        break;
-                    case 2:
-                        result = this.SplitRebar(singleRebar, SpliceSection.EveryForth, BarPositions.Third, ref remainingOffset, out splitRebarSet);
-                        break;
-                    case 3:
-                        result = this.SplitRebar(singleRebar, SpliceSection.EveryForth, BarPositions.Forth, ref remainingOffset, out splitRebarSet);
-                        break;
-                    default:
-                        result = this.SplitRebar(singleRebar, SpliceSection.EveryForth, BarPositions.First, ref remainingOffset, out splitRebarSet);
-                        break;
+                    switch (rebarIndex % 4)
+                    {
+                        case 0:
+                            result = this.SplitRebar(singleRebar, SpliceSection.EveryForth, BarPositions.First, segmentLengths, ref remainingOffset, out splitRebarSet);
+                            break;
+                        case 1:
+                            result = this.SplitRebar(singleRebar, SpliceSection.EveryForth, BarPositions.Second, segmentLengths, ref remainingOffset, out splitRebarSet);
+                            break;
+                        case 2:
+                            result = this.SplitRebar(singleRebar, SpliceSection.EveryForth, BarPositions.Third, segmentLengths, ref remainingOffset, out splitRebarSet);
+                            break;
+                        case 3:
+                            result = this.SplitRebar(singleRebar, SpliceSection.EveryForth, BarPositions.Forth, segmentLengths, ref remainingOffset, out splitRebarSet);
+                            break;
+                        default:
+                            result = this.SplitRebar(singleRebar, SpliceSection.EveryForth, BarPositions.First, segmentLengths, ref remainingOffset, out splitRebarSet);
+                            break;
+                    }
+                }
+                else
+                {
+                    switch (rebarIndex % 4)
+                    {
+                        case 0:
+                            result = this.SplitRebar(singleRebar, SpliceSection.EveryForth, BarPositions.First, ref remainingOffset, out splitRebarSet);
+                            break;
+                        case 1:
+                            result = this.SplitRebar(singleRebar, SpliceSection.EveryForth, BarPositions.Second, ref remainingOffset, out splitRebarSet);
+                            break;
+                        case 2:
+                            result = this.SplitRebar(singleRebar, SpliceSection.EveryForth, BarPositions.Third, ref remainingOffset, out splitRebarSet);
+                            break;
+                        case 3:
+                            result = this.SplitRebar(singleRebar, SpliceSection.EveryForth, BarPositions.Forth, ref remainingOffset, out splitRebarSet);
+                            break;
+                        default:
+                            result = this.SplitRebar(singleRebar, SpliceSection.EveryForth, BarPositions.First, ref remainingOffset, out splitRebarSet);
+                            break;
+                    }
                 }
             }
 
@@ -916,9 +838,10 @@ namespace Tekla.Structures.Concrete
         /// <summary>The split every rebar in same location.</summary>
         /// <param name="rebarIndex">The reinforcement bar index.</param>
         /// <param name="remainingOffset">The remaining offset.</param>
+        /// <param name="segmentLengths">Lengths of bars segments.</param>
         /// <param name="splitRebarSet">The split reinforcement bar set.</param>
         /// <returns>The System.Boolean.</returns>
-        private bool SplitEveryRebarInSameLocation(int rebarIndex, ref double remainingOffset, out ArrayList splitRebarSet)
+        private bool SplitEveryRebarInSameLocation(int rebarIndex, ref double remainingOffset, List<double> segmentLengths, out ArrayList splitRebarSet)
         {
             var result = false;
             var singleRebar = this.singleRebars[rebarIndex] as SingleRebar;
@@ -926,7 +849,14 @@ namespace Tekla.Structures.Concrete
 
             if (singleRebar != null)
             {
-                result = this.SplitRebar(singleRebar, SpliceSection.EverySingle, BarPositions.First, ref remainingOffset, out splitRebarSet);
+                if (segmentLengths.Count == 0)
+                {
+                    result = this.SplitRebar(singleRebar, SpliceSection.EverySingle, BarPositions.First, ref remainingOffset, out splitRebarSet);
+                }
+                else
+                {
+                    result = this.SplitRebar(singleRebar, SpliceSection.EverySingle, BarPositions.First, segmentLengths, ref remainingOffset, out splitRebarSet);
+                }
             }
 
             return result;
@@ -935,9 +865,10 @@ namespace Tekla.Structures.Concrete
         /// <summary>The split every second rebar in same location.</summary>
         /// <param name="rebarIndex">The reinforcement bar index.</param>
         /// <param name="remainingOffset">The remaining offset.</param>
+        /// <param name="segmentLengths">Lengths of bars segments.</param>
         /// <param name="splitRebarSet">The split reinforcement bar set.</param>
         /// <returns>The System.Boolean.</returns>
-        private bool SplitEverySecondRebarInSameLocation(int rebarIndex, ref double remainingOffset, out ArrayList splitRebarSet)
+        private bool SplitEverySecondRebarInSameLocation(int rebarIndex, ref double remainingOffset, List<double> segmentLengths, out ArrayList splitRebarSet)
         {
             var result = false;
             var singleRebar = this.singleRebars[rebarIndex] as SingleRebar;
@@ -948,10 +879,20 @@ namespace Tekla.Structures.Concrete
 
             if (singleRebar != null)
             {
-                result =
-                    rebarIndex % 2 == 0 ?
-                    this.SplitRebar(singleRebar, SpliceSection.EverySecond, BarPositions.First, ref remainingOffset, out splitRebarSet) :
-                    this.SplitRebar(singleRebar, SpliceSection.EverySecond, BarPositions.Second, ref remainingOffset, out splitRebarSet);
+                if (segmentLengths.Count != 0)
+                {
+                    result =
+                        rebarIndex % 2 == 0 ?
+                        this.SplitRebar(singleRebar, SpliceSection.EverySecond, BarPositions.First, segmentLengths, ref remainingOffset, out splitRebarSet) :
+                        this.SplitRebar(singleRebar, SpliceSection.EverySecond, BarPositions.Second, segmentLengths, ref remainingOffset, out splitRebarSet);
+                }
+                else
+                {
+                    result =
+                        rebarIndex % 2 == 0 ?
+                        this.SplitRebar(singleRebar, SpliceSection.EverySecond, BarPositions.First, ref remainingOffset, out splitRebarSet) :
+                        this.SplitRebar(singleRebar, SpliceSection.EverySecond, BarPositions.Second, ref remainingOffset, out splitRebarSet);
+                }
             }
 
             return result;
@@ -959,10 +900,11 @@ namespace Tekla.Structures.Concrete
 
         /// <summary>The split every third rebar in same location.</summary>
         /// <param name="rebarIndex">The reinforcement bar index.</param>
+        /// <param name="segmentLengths">Lengths of bars segments.</param>
         /// <param name="remainingOffset">The remaining offset.</param>
         /// <param name="splitRebarSet">The split reinforcement bar set.</param>
         /// <returns>The System.Boolean.</returns>
-        private bool SplitEveryThirdRebarInSameLocation(int rebarIndex, ref double remainingOffset, out ArrayList splitRebarSet)
+        private bool SplitEveryThirdRebarInSameLocation(int rebarIndex, List<double> segmentLengths, ref double remainingOffset, out ArrayList splitRebarSet)
         {
             var result = false;
             var singleRebar = this.singleRebars[rebarIndex] as SingleRebar;
@@ -973,20 +915,41 @@ namespace Tekla.Structures.Concrete
 
             if (singleRebar != null)
             {
-                switch (rebarIndex % 3)
+                if (segmentLengths.Count != 0)
                 {
-                    case 0:
-                        result = this.SplitRebar(singleRebar, SpliceSection.EveryThird, BarPositions.First, ref remainingOffset, out splitRebarSet);
-                        break;
-                    case 1:
-                        result = this.SplitRebar(singleRebar, SpliceSection.EveryThird, BarPositions.Second, ref remainingOffset, out splitRebarSet);
-                        break;
-                    case 2:
-                        result = this.SplitRebar(singleRebar, SpliceSection.EveryThird, BarPositions.Third, ref remainingOffset, out splitRebarSet);
-                        break;
-                    default:
-                        result = this.SplitRebar(singleRebar, SpliceSection.EveryThird, BarPositions.First, ref remainingOffset, out splitRebarSet);
-                        break;
+                    switch (rebarIndex % 3)
+                    {
+                        case 0:
+                            result = this.SplitRebar(singleRebar, SpliceSection.EveryThird, BarPositions.First, segmentLengths, ref remainingOffset, out splitRebarSet);
+                            break;
+                        case 1:
+                            result = this.SplitRebar(singleRebar, SpliceSection.EveryThird, BarPositions.Second, segmentLengths, ref remainingOffset, out splitRebarSet);
+                            break;
+                        case 2:
+                            result = this.SplitRebar(singleRebar, SpliceSection.EveryThird, BarPositions.Third, segmentLengths, ref remainingOffset, out splitRebarSet);
+                            break;
+                        default:
+                            result = this.SplitRebar(singleRebar, SpliceSection.EveryThird, BarPositions.First, segmentLengths, ref remainingOffset, out splitRebarSet);
+                            break;
+                    }
+                }
+                else
+                {
+                    switch (rebarIndex % 3)
+                    {
+                        case 0:
+                            result = this.SplitRebar(singleRebar, SpliceSection.EveryThird, BarPositions.First, ref remainingOffset, out splitRebarSet);
+                            break;
+                        case 1:
+                            result = this.SplitRebar(singleRebar, SpliceSection.EveryThird, BarPositions.Second, ref remainingOffset, out splitRebarSet);
+                            break;
+                        case 2:
+                            result = this.SplitRebar(singleRebar, SpliceSection.EveryThird, BarPositions.Third, ref remainingOffset, out splitRebarSet);
+                            break;
+                        default:
+                            result = this.SplitRebar(singleRebar, SpliceSection.EveryThird, BarPositions.First, ref remainingOffset, out splitRebarSet);
+                            break;
+                    }
                 }
             }
 
@@ -1057,6 +1020,203 @@ namespace Tekla.Structures.Concrete
             }
 
             return result;
+        }
+
+        /// <summary>The split rebar.</summary>
+        /// <param name="originalRebar">The original rebar.</param>
+        /// <param name="section">The section.</param>
+        /// <param name="barPosition">The bar position.</param>
+        /// <param name="rebarSegmentLengths">Lengths of all rebars segments.</param>
+        /// <param name="remainingOffset">The remaining offset.</param>
+        /// <param name="splitRebarSet">The split reinforcement bar set.</param>
+        /// <returns>The System.Boolean.</returns>
+        private bool SplitRebar(
+            SingleRebar originalRebar,
+            SpliceSection section,
+            BarPositions barPosition,
+            List<double> rebarSegmentLengths,
+            ref double remainingOffset,
+            out ArrayList splitRebarSet)
+        {
+            bool result = true;
+            double maxLength;
+            double totalOffset;
+            double remainingLength;
+            double hookLength;
+            double incrementalLength = 0.0;
+            double totalRebarLength = 0.0;
+            double previousLength = 0.0;
+            splitRebarSet = new ArrayList();
+
+            ArrayList previousPoints = new ArrayList();
+
+            foreach (double length in rebarSegmentLengths)
+            {
+                totalRebarLength += length;
+            }
+
+            CreateSingleRebar createSingleRebar = new CreateSingleRebar(originalRebar);
+
+            for (int jj = 0; jj < originalRebar.Polygon.Points.Count - 1; jj++)
+            {
+                Vector splitPattern = new Vector((Point)originalRebar.Polygon.Points[jj + 1] - (Point)originalRebar.Polygon.Points[jj]);
+
+                this.GetRebarMaximumLength(FirstOrLastEnum.MiddleRebar, out maxLength);
+                this.CalculateTotalOffset(
+                    totalRebarLength,
+                    section,
+                    barPosition,
+                    remainingOffset,
+                    out totalOffset,
+                    out remainingLength,
+                    out hookLength);
+
+                ArrayList splitRebarSegment = new ArrayList();
+                ArrayList rebarPoints = new ArrayList();
+                rebarPoints.Add(originalRebar.Polygon.Points[jj]);
+                rebarPoints.Add(originalRebar.Polygon.Points[jj + 1]);
+
+                SingleRebar segmentToSplit = createSingleRebar.GetSingleRebar(rebarPoints);
+
+                if ((previousLength + rebarSegmentLengths[jj]) > maxLength)
+                {
+                    for (int ii = 0; incrementalLength + this.GetRebarLengthEpsilon() < totalRebarLength; ii++)
+                    {
+                        if (ii == 0 && jj == 0)
+                        {
+                            result &= this.CreateStartRebar(segmentToSplit, splitPattern, splitRebarSegment, totalOffset, hookLength, ref incrementalLength);
+                        }
+                        else if (incrementalLength + maxLength + this.GetRebarLengthEpsilon() < totalRebarLength)
+                        {
+                            int centralBarsCount = (int)Math.Floor(totalRebarLength / maxLength);
+
+                            if (this.splitData.SpliceSymmetry == 2 &&
+                                barPosition == BarPositions.First &&
+                                centralBarsCount > 1 &&
+                                incrementalLength < totalRebarLength / 2.0 &&
+                                incrementalLength + maxLength > totalRebarLength / 2.0)
+                            {
+                                result &= this.CreateDifferentMiddleRebarInCenterSymmetry(remainingLength, segmentToSplit, ref splitPattern, ref incrementalLength, ref splitRebarSegment);
+                            }
+                            else
+                            {
+                                result &= this.CreateMiddleRebar(segmentToSplit, splitPattern, splitRebarSegment, ref incrementalLength);
+                            }
+                        }
+                        else
+                        {
+                            double lastSegment;
+                            double segmentLength;
+
+                            if (incrementalLength < maxLength + DistanceEpsilon)
+                            {
+                                segmentLength = rebarSegmentLengths[jj] - (maxLength - incrementalLength);
+                            }
+                            else
+                            {
+                                int multiplayer = (int)(incrementalLength / maxLength);
+                                segmentLength = rebarSegmentLengths[jj] - ((multiplayer + 1) * maxLength - incrementalLength);
+                            }
+
+                            result &= this.CreateEndRebar(segmentToSplit, maxLength, splitPattern, splitRebarSegment, ref segmentLength, out lastSegment);
+                            incrementalLength = segmentLength;
+
+                            if (barPosition == BarPositions.First)
+                            {
+                                remainingOffset = lastSegment;
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    incrementalLength += rebarSegmentLengths[jj];
+                    previousLength += rebarSegmentLengths[jj];
+                    this.AddRebarPoint(originalRebar.Polygon.Points[jj] as Point, previousPoints);
+                    this.AddRebarPoint(originalRebar.Polygon.Points[jj + 1] as Point, previousPoints);
+
+                    DrawPoint(originalRebar.Polygon.Points[jj] as Point, jj.ToString());
+                    DrawPoint(originalRebar.Polygon.Points[jj + 1] as Point, (jj + 1).ToString());
+                }
+
+                if (splitRebarSegment.Count != 0 && previousPoints.Count > 0)
+                {
+                    DrawPoint(((SingleRebar)splitRebarSegment[0]).Polygon.Points[0] as Point, "SP" + jj.ToString());
+                    DrawPoint(((SingleRebar)splitRebarSegment[0]).Polygon.Points[1] as Point, "SP" + (jj + 1).ToString());
+
+                    previousPoints.Add(((SingleRebar)splitRebarSegment[0]).Polygon.Points[0]);
+                    SingleRebar previousBar = createSingleRebar.GetSingleRebar(previousPoints);
+                    splitRebarSegment.Insert(0, previousBar);
+
+                    previousPoints.Clear();
+                    previousLength = 0.0;
+                }
+
+                splitRebarSet.AddRange(splitRebarSegment);
+            }
+
+            return result;
+        }
+
+        private void DrawPoint(Point inputPoint, string comment)
+        {
+
+
+            Tekla.Structures.Model.UI.GraphicsDrawer drawer = new Tekla.Structures.Model.UI.GraphicsDrawer();
+            drawer.DrawText(inputPoint, comment, new Tekla.Structures.Model.UI.Color(1, 0, 0));
+            
+        }
+
+        /// <summary>
+        /// Add rebar point into the list, if point is not already within.
+        /// </summary>
+        /// <param name="rebarPoint">Rebar point.</param>
+        /// <param name="list">List of rebar points.</param>
+        private void AddRebarPoint(Point rebarPoint, ArrayList list)
+        {
+            if (rebarPoint != null && !list.Contains(rebarPoint))
+            {
+                list.Add(rebarPoint);
+            }
+        }
+
+        /// <summary>
+        /// Get start hook real length
+        /// </summary>
+        /// <param name="rebarHookData">Hook data</param>
+        /// <param name="actualRebarSize">Actual rebar size</param>
+        /// <returns>Real length of start hook</returns>
+        private double GetHookRealLength(RebarHookData rebarHookData, double actualRebarSize)
+        {
+            double radius = rebarHookData.Radius;
+            double length = rebarHookData.Length;
+            double angle = rebarHookData.Angle;
+
+            double hookAngleRadians = (Math.Abs(angle) / 180.0) * Math.PI;
+            double r = radius + actualRebarSize / 2.0;
+            double legnthOfBend = hookAngleRadians * r;
+            double startHookRealLength = length + legnthOfBend - (r + actualRebarSize / 2.0);
+
+            if (length < DistanceEpsilon)
+            {
+                startHookRealLength = 0.0;
+            }
+
+            return startHookRealLength;
+        }
+
+        /// <summary>
+        /// Get rebar diameter.
+        /// </summary>
+        /// <param name="size">Rebar size</param>
+        /// <param name="grade">Rebar grade</param>
+        /// <returns>Rebar diameter</returns>
+        private double GetRebarDiameter(string size, string grade)
+        {
+            Catalogs.RebarItem rebar = new Catalogs.RebarItem();
+            rebar.Select(grade, size);
+
+            return rebar.ActualDiameter;
         }
 
         #endregion
