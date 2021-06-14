@@ -2,7 +2,7 @@ namespace Tekla.Structures.Concrete
 {
     using System;
     using System.Collections;
-
+    using System.Collections.Generic;
     using Tekla.Structures.Geometry3d;
     using Tekla.Structures.Model;
 
@@ -214,6 +214,19 @@ namespace Tekla.Structures.Concrete
 
                 result = true;
             }
+            else if (this.CheckIfRebarsCanBeTaperedCurved() && this.singleRebars.Count > 2)
+            {
+                this.GetCircleTaperedGroup();
+
+                newRebarGroups = new ArrayList(this.rebarGroups);
+                newUngroupedRebars = new ArrayList(this.ungroupedRebars);
+
+                result = true;
+            }
+            else
+            {
+                newUngroupedRebars = new ArrayList(this.singleRebars);
+            }
 
             return result;
         }
@@ -315,6 +328,87 @@ namespace Tekla.Structures.Concrete
         }
 
         /// <summary>
+        /// Check if rebars can be created as tapered curve group.
+        /// </summary>
+        /// <returns>True when rebars can be grouped as round bars.</returns>
+        private bool CheckIfRebarsCanBeTaperedCurved()
+        {
+            bool result = true;
+
+            if (this.singleRebars.Count > 1 && this.rebarGroupConversionData.StirrupType != RebarGroup.RebarGroupStirrupTypeEnum.STIRRUP_TYPE_POLYGONAL)
+            {
+                SingleRebar firstRebar = this.singleRebars[0] as SingleRebar;
+                Line originalLine = new Line((Point)firstRebar.Polygon.Points[1], (Point)firstRebar.Polygon.Points[0]);
+                GeometricPlane rebarGoundPlane = new GeometricPlane(
+                    (Point)firstRebar.Polygon.Points[0],
+                    new Vector((Point)firstRebar.Polygon.Points[1] - (Point)firstRebar.Polygon.Points[0]));
+
+                List<Point> rebarBase = new List<Point>();
+
+                foreach (SingleRebar rebar in this.singleRebars)
+                {   
+                    Line rebarLine = new Line((Point)rebar.Polygon.Points[1],  (Point)rebar.Polygon.Points[0]);
+
+                    if (Parallel.LineToLine(rebarLine, originalLine))
+                    {
+                        Point basePoint = Intersection.LineToPlane(rebarLine, rebarGoundPlane);
+                        this.AddPointToList(basePoint, rebarBase);
+                    }
+                    else
+                    {
+                        result = false;
+                    }
+                }
+
+                Point middle = new Point();
+
+                foreach (Point point in rebarBase)
+                {
+                    middle += point;
+                }
+
+                middle.X /= rebarBase.Count;
+                middle.Y /= rebarBase.Count;
+                middle.Z /= rebarBase.Count;
+
+                double distance = Distance.PointToPoint(middle, rebarBase[0]);
+
+                foreach (Point point in rebarBase)
+                {
+                    if (Math.Abs(distance - Distance.PointToPoint(middle, point)) >= DistanceEpsilon)
+                    {
+                        result = false;
+                    }
+                }
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Add point into list if it is not already there.
+        /// </summary>
+        /// <param name="point">Point to be add to the list.</param>
+        /// <param name="pointList">List of points.</param>
+        private void AddPointToList(Point point, List<Point> pointList)
+        {
+            bool add = true;
+
+            foreach (Point pointFromList in pointList)
+            {
+                if (Distance.PointToPoint(point, pointFromList) < DistanceEpsilon)
+                {
+                    add = false;
+                }
+            }
+
+            if (add)
+            {
+                pointList.Add(point);
+            }
+        }
+
+        /// <summary>
         /// The check if reinforcement bars are in same plane.
         /// </summary>
         /// <returns>
@@ -325,16 +419,16 @@ namespace Tekla.Structures.Concrete
         /// </exception>
         private bool CheckIfRebarsAreInSamePlane()
         {
-            var result = false;
+            bool result = false;
 
-            if (this.singleRebars.Count > 1)
+            if (this.singleRebars.Count > 1 && this.rebarGroupConversionData.StirrupType == RebarGroup.RebarGroupStirrupTypeEnum.STIRRUP_TYPE_POLYGONAL)
             {
-                var firstRebar = this.singleRebars[0] as SingleRebar;
-                var secondRebar = this.singleRebars[1] as SingleRebar;
+                SingleRebar firstRebar = this.singleRebars[0] as SingleRebar;
+                SingleRebar secondRebar = this.singleRebars[1] as SingleRebar;
 
                 if (firstRebar != null && secondRebar != null)
                 {
-                    var rebarGroupPlane = new GeometricPlane(
+                    GeometricPlane rebarGroupPlane = new GeometricPlane(
                         (Point)firstRebar.Polygon.Points[0], 
                         new Vector((Point)firstRebar.Polygon.Points[1] - (Point)firstRebar.Polygon.Points[0]), 
                         new Vector((Point)secondRebar.Polygon.Points[0] - (Point)firstRebar.Polygon.Points[0]));
@@ -372,7 +466,7 @@ namespace Tekla.Structures.Concrete
 
             if (this.GetPolygonForRebarGroup(parallelRebars, out polygon1, out polygon2))
             {
-                newRebarGroup = this.GetRebarGroup(parallelRebars, type, polygon1, polygon2);
+                newRebarGroup = this.GetRebarGroup(parallelRebars, type, polygon1, polygon2, true);
                 result = true;
             }
 
@@ -656,10 +750,8 @@ namespace Tekla.Structures.Concrete
                     lastRebar = auxiliaryRebar;
                 }
 
-                polygon1.Points.Add(lastRebar.Polygon.Points[0]);
-                polygon1.Points.Add(lastRebar.Polygon.Points[1]);
-                polygon2.Points.Add(firstRebar.Polygon.Points[0]);
-                polygon2.Points.Add(firstRebar.Polygon.Points[1]);
+                polygon1.Points = lastRebar.Polygon.Points;
+                polygon2.Points = firstRebar.Polygon.Points;
 
                 result = true;
             }
@@ -672,8 +764,9 @@ namespace Tekla.Structures.Concrete
         /// <param name="type">The type value.</param>
         /// <param name="polygon1">The polygon 1.</param>
         /// <param name="polygon2">The polygon 2.</param>
+        /// <param name="checkHooks">Indicates when ever the hooks should be checked.</param>
         /// <returns>The Tekla.Structures.Model.RebarGroup.</returns>
-        private RebarGroup GetRebarGroup(ArrayList parallelRebars, GroupType type, Polygon polygon1, Polygon polygon2)
+        private RebarGroup GetRebarGroup(ArrayList parallelRebars, GroupType type, Polygon polygon1, Polygon polygon2, bool checkHooks)
         {
             var newRebarGroup = new RebarGroup();
             var primaryRebar = parallelRebars[0] as SingleRebar;
@@ -728,7 +821,7 @@ namespace Tekla.Structures.Concrete
                 newRebarGroup.EndPointOffsetValue = primaryRebar.EndPointOffsetValue;
                 newRebarGroup.EndPointOffsetType = primaryRebar.EndPointOffsetType;
 
-                if (this.RebarHooksShouldBeTurned(newRebarGroup))
+                if (checkHooks && this.RebarHooksShouldBeTurned(newRebarGroup))
                 {
                     if (newRebarGroup.StartHook.Shape != RebarHookData.RebarHookShapeEnum.NO_HOOK)
                     {
@@ -770,6 +863,55 @@ namespace Tekla.Structures.Concrete
                     }
                 }
             }
+        }
+
+        /// <summary>
+        /// Get circle papered rebar group;
+        /// </summary>
+        private void GetCircleTaperedGroup()
+        {
+            for (int jj = 0; jj < this.singleRebars.Count && this.singleRebars.Count > 2; jj++)
+            {
+                SingleRebar firstRebar = this.singleRebars[0] as SingleRebar;
+                GeometricPlane rebarGoundPlane = new GeometricPlane(
+                    (Point)firstRebar.Polygon.Points[0],
+                    new Vector((Point)firstRebar.Polygon.Points[1] - (Point)firstRebar.Polygon.Points[0]));
+
+                List<Polygon> groupsPolygons = new List<Polygon>();
+                ArrayList parallelRebars = new ArrayList();
+
+                for (int ii = 0; ii < this.singleRebars.Count; ii++)
+                {
+                    SingleRebar rebar = this.singleRebars[ii] as SingleRebar;
+                    LineSegment rebarLine = new LineSegment((Point)rebar.Polygon.Points[1], (Point)rebar.Polygon.Points[0]);
+
+                    if (Intersection.LineSegmentToPlane(rebarLine, rebarGoundPlane) != null)
+                    {
+                        groupsPolygons.Add(rebar.Polygon);
+                        parallelRebars.Add(rebar);
+                        this.singleRebars.RemoveAt(ii);
+                        ii--;
+                    }
+                }
+
+                if (groupsPolygons.Count > 2)
+                {
+                    RebarGroup circleRebars = this.GetRebarGroup(parallelRebars, GroupType.Tapered, groupsPolygons[0], groupsPolygons[1], false);
+                    circleRebars.Polygons.Clear();
+                    circleRebars.Polygons.Add(groupsPolygons[1]);
+                    circleRebars.Polygons.Add(groupsPolygons[0]);
+                    circleRebars.Polygons.Add(groupsPolygons[2]);
+                    circleRebars.StirrupType = RebarGroup.RebarGroupStirrupTypeEnum.STIRRUP_TYPE_TAPERED_CURVED;
+
+                    circleRebars.SpacingType = BaseRebarGroup.RebarGroupSpacingTypeEnum.SPACING_TYPE_EXACT_NUMBER;
+                    circleRebars.Spacings.Clear();
+                    circleRebars.Spacings.Add(groupsPolygons.Count);
+
+                    this.rebarGroups.Add(circleRebars);
+                }
+            }
+
+            this.ungroupedRebars.AddRange(this.singleRebars);
         }
 
         /// <summary>The get tapered reinforcement bar group.</summary>

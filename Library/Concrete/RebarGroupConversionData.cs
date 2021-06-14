@@ -16,6 +16,7 @@ namespace Tekla.Structures.Concrete
             this.FatherSlab = new ContourPlate();
             this.Spacing = 0.0;
             this.SpliceSection = 0;
+            this.StirrupType = RebarGroup.RebarGroupStirrupTypeEnum.STIRRUP_TYPE_POLYGONAL;
         }
 
         #endregion
@@ -37,6 +38,11 @@ namespace Tekla.Structures.Concrete
         /// <summary>Gets or sets the splice section.</summary>
         /// <value>The splice section.</value>
         public int SpliceSection { get; set; }
+
+        /// <summary>
+        /// Gets or sets stirrup type.
+        /// </summary>
+        public RebarGroup.RebarGroupStirrupTypeEnum StirrupType { get; set; }
 
         #endregion
     }
