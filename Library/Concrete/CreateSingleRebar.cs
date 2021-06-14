@@ -45,21 +45,19 @@ namespace Tekla.Structures.Concrete
         /// <returns>The Tekla.Structures.Model.SingleRebar.</returns>
         public SingleRebar GetSingleRebar(ArrayList rebarPoints)
         {
-            var newRebar = new SingleRebar();
-            var polyRebar = new Polygon();
+            SingleRebar newRebar = new SingleRebar();
+            newRebar.Polygon.Points = new ArrayList(rebarPoints);
 
-            polyRebar.Points.Add(rebarPoints[0]);
-            polyRebar.Points.Add(rebarPoints[1]);
-            newRebar.Polygon = polyRebar;
+            SingleRebar originalSingleRebar = this.originalRebar as SingleRebar;
 
-            var originalSingleRebar = this.originalRebar as SingleRebar;
             if (originalSingleRebar != null)
             {
                 this.SetNewRebarPropertiesFromSingleRebar(newRebar, originalSingleRebar);
             }
             else
             {
-                var originalRebarGroup = this.originalRebar as RebarGroup;
+                RebarGroup originalRebarGroup = this.originalRebar as RebarGroup;
+
                 if (originalRebarGroup != null)
                 {
                     this.SetNewRebarPropertiesFromRebarGroup(newRebar, originalRebarGroup);
@@ -67,14 +65,14 @@ namespace Tekla.Structures.Concrete
             }
 
             // Needed to ensure that the reinforcement bar ends will not overcome the cover thinkness.
-            if (newRebar.EndPointOffsetType == Reinforcement.RebarOffsetTypeEnum.OFFSET_TYPE_COVER_THICKNESS
-                && newRebar.EndPointOffsetValue < OverhangEpsilon)
+            if (newRebar.EndPointOffsetType == Reinforcement.RebarOffsetTypeEnum.OFFSET_TYPE_COVER_THICKNESS &&
+                newRebar.EndPointOffsetValue < OverhangEpsilon)
             {
                 newRebar.EndPointOffsetValue = OverhangEpsilon;
             }
 
-            if (newRebar.StartPointOffsetType == Reinforcement.RebarOffsetTypeEnum.OFFSET_TYPE_COVER_THICKNESS
-                && newRebar.StartPointOffsetValue < OverhangEpsilon)
+            if (newRebar.StartPointOffsetType == Reinforcement.RebarOffsetTypeEnum.OFFSET_TYPE_COVER_THICKNESS &&
+                newRebar.StartPointOffsetValue < OverhangEpsilon)
             {
                 newRebar.StartPointOffsetValue = OverhangEpsilon;
             }
